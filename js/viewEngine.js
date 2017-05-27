@@ -29,11 +29,11 @@ var drawPlayer = function(){
         if (player.vely != 0) sprites = playerSpritesVert;
         else sprites = playerSpritesHori;
         
-        if (player.facing === 1) {
+        if (player.facing === 1) { //If facing right
             ctx.drawImage(sprites[Math.floor(iteration/duration)], player.x-player.width/2, 
             player.y-player.height/2, player.width*1.8, player.height);
         }
-        else if (player.facing === -1) {
+        else if (player.facing === -1) { //If facing left
             ctx.drawImage(sprites[Math.floor(iteration/duration)], player.x-player.width/2-player.width*0.8, 
             player.y-player.height/2, player.width*1.8, player.height);
         }
