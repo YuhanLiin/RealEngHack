@@ -17,7 +17,7 @@ function Game(){
         game.player.receiveInputs(game.controls);
         game.player.frameProcess();
         game.enemies.forEach(enemy=>{
-            enemy.aiDecision(player);
+            enemy.aiDecision(game.player);
             enemy.frameProcess();
         });
     };

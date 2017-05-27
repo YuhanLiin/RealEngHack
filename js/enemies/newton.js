@@ -5,7 +5,7 @@ function Newton(game, x, y){
     return char;
 }
 
-Newton.prototype = Object.assign(character.prototype, {
+Newton.prototype = Object.assign(Character.prototype, {
     baseSpeed : 3.5,
     width : 40,
     height : 50,

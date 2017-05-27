@@ -3,17 +3,17 @@ function Character(game, x, y){
     var char = Object.create(Character.prototype);
     char.x = x;
     char.y = y;
-    char.baseSpeed = 5;
     char.velx = 0;
     char.vely = 0;
     char.facing = 1;
-    char.width = 40;
-    char.height = 50;
     char.game = game;
     return char;
 }
 
 Character.prototype = {
+    baseSpeed: 5,
+    width: 40,
+    height: 50,
     turnLeft(){
         this.velx = -this.baseSpeed;
         this.vely = 0;
@@ -57,8 +57,40 @@ Character.prototype = {
 
 module.exports = Character;
 },{}],2:[function(require,module,exports){
+var Character = require("../character.js");
+
+function Newton(game, x, y){
+    var char = Object.assign(Object.create(Newton.prototype), Character(game, x, y));
+    return char;
+}
+
+Newton.prototype = Object.assign(Character.prototype, {
+    baseSpeed : 3.5,
+    width : 40,
+    height : 50,
+    aiDecision(player){
+        var dx = player.x - this.x;
+        var dy = player.y - this.y;
+        if (Math.abs(dx) > Math.abs(dy)){
+            if (dx > 0){
+                this.turnRight();
+            }
+            else this.turnLeft();
+        }
+        else{
+            if (dy > 0){
+                this.turnDown();
+            }
+            else this.turnUp();
+        }
+    }
+});
+
+module.exports = Newton;
+},{"../character.js":1}],3:[function(require,module,exports){
 var Character = require("./character.js");
 var Player = require("./player.js");
+var Newton = require("./enemies/newton.js");
 
 function Game(){
     var game = {};
@@ -67,12 +99,17 @@ function Game(){
     game.frameCount = 0;
     game.player = Player(game, 400, 300);
     game.controls = {dir: 'i', dash:'i', attack:'i'};
-    game.enemies = [];
+    game.enemies = [Newton(game, 100, 100)];
     game.playerAttacks = [];
     game.enemyAttacks = [];
+
     game.runFrame = function(){
         game.player.receiveInputs(game.controls);
         game.player.frameProcess();
+        game.enemies.forEach(enemy=>{
+            enemy.aiDecision(game.player);
+            enemy.frameProcess();
+        });
     };
 
     game.onPress = function(keyCode){
@@ -125,7 +162,7 @@ function Game(){
 }
 
 module.exports = Game;
-},{"./character.js":1,"./player.js":4}],3:[function(require,module,exports){
+},{"./character.js":1,"./enemies/newton.js":2,"./player.js":5}],4:[function(require,module,exports){
 $(document).ready(function(){
     var Game = require("./game.js");
     var view = require("./viewEngine.js");
@@ -158,7 +195,7 @@ $(document).ready(function(){
 });
 
 
-},{"./game.js":2,"./viewEngine.js":5}],4:[function(require,module,exports){
+},{"./game.js":3,"./viewEngine.js":6}],5:[function(require,module,exports){
 var Character = require("./character.js");
 
 function Player(game, x, y){
@@ -186,12 +223,13 @@ function Player(game, x, y){
 }
 
 module.exports = Player;
-},{"./character.js":1}],5:[function(require,module,exports){
+},{"./character.js":1}],6:[function(require,module,exports){
 var canvas = document.getElementById('screen');
 var ctx = canvas.getContext('2d');
 
 function drawGame(game){
     drawPlayer(game.player);
+    game.enemies.forEach(drawEnemy);
 
     ctx.fillStyle='red';
     ctx.globalAlpha = 0.2;
@@ -223,10 +261,30 @@ var drawPlayer = function(){
     }
 }();
 
+function drawEnemy(enemy){
+    drawNewton(enemy);
+}
+
+var newtonSpritesHori = [document.getElementById('newton1'), document.getElementById('newton2')];
+var newtonSpritesVert = [document.getElementById('newton4'), document.getElementById('newton3')];
+var drawNewton = function(){
+    var iteration = 0;
+    var duration = 10;
+    return function(newton){
+        var sprites;
+        if (newton.vely != 0) sprites = newtonSpritesVert;
+        else sprites = newtonSpritesHori;
+        ctx.drawImage(sprites[Math.floor(iteration/duration)], newton.x-newton.width, 
+            newton.y-newton.height/2, newton.width*2, newton.height);
+        if (newton.velx != 0 || newton.vely != 0) iteration++;
+        if(iteration >= 2*duration) iteration = 0;
+    }
+}();
+
 function drawHitbox(hitbox){
     ctx.fillRect(hitbox.x-hitbox.width/2, 
             hitbox.y-hitbox.height/2, hitbox.width, hitbox.height);
 }
 
 module.exports = {eraseGame: eraseGame, drawGame: drawGame};
-},{}]},{},[3]);
+},{}]},{},[4]);
