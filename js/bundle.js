@@ -137,7 +137,7 @@ function Game(){
             enemy.frameProcess();
         });
         if (game.frameCount % (60*4) === 0){
-            game.enemies.push(randomSpawn(game,Newton));
+            //game.enemies.push(randomSpawn(game,Newton));
         }
         game.playerAttacks.forEach(atk=>{
             game.enemies.forEach(enemy=>atk.checkHit(enemy));
@@ -285,7 +285,7 @@ function Player(game, x, y){
     },
     char._attackProcess = function(){
         if (this.atkFrame === 10){
-            this.game.playerAttacks.push(Hitbox(this.x+(this.width/2+20)*this.facing, this.y+20, 40, 10));
+            this.game.playerAttacks.push(Hitbox(this.x+(this.width/2+20)*this.facing, this.y-20, 40, 10));
         }
         else if (this.atkFrame === 15){
             this.atkFrame = 0;

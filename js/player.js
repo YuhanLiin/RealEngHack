@@ -25,7 +25,7 @@ function Player(game, x, y){
     },
     char._attackProcess = function(){
         if (this.atkFrame === 10){
-            this.game.playerAttacks.push(Hitbox(this.x+(this.width/2+20)*this.facing, this.y+20, 40, 10));
+            this.game.playerAttacks.push(Hitbox(this.x+(this.width/2+20)*this.facing, this.y-20, 40, 10));
         }
         else if (this.atkFrame === 15){
             this.atkFrame = 0;
