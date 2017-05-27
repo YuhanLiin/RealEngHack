@@ -1,0 +1,14 @@
+{
+  "name": "platformer",
+  "version": "1.0.0",
+  "description": "\"Enghack project\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "EngHack"
+  ],
+  "author": "Yuhan, Faisal, Zahin",
+  "license": "ISC"
+}
