@@ -1,5 +1,6 @@
 var Character = require("./character.js");
 var Player = require("./player.js");
+var Newton = require("./enemies/newton.js");
 
 function Game(){
     var game = {};
@@ -8,12 +9,17 @@ function Game(){
     game.frameCount = 0;
     game.player = Player(game, 400, 300);
     game.controls = {dir: 'i', dash:'i', attack:'i'};
-    game.enemies = [];
+    game.enemies = [Newton(game, 100, 100)];
     game.playerAttacks = [];
     game.enemyAttacks = [];
+
     game.runFrame = function(){
         game.player.receiveInputs(game.controls);
         game.player.frameProcess();
+        game.enemies.forEach(enemy=>{
+            enemy.aiDecision(player);
+            enemy.frameProcess();
+        });
     };
 
     game.onPress = function(keyCode){
