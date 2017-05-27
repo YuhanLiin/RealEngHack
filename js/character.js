@@ -4,8 +4,12 @@ function Character(game, x, y){
     char.y = y;
     char.velx = 0;
     char.vely = 0;
+<<<<<<< HEAD
     char.facing = 1;
     char.atkFrame = 0;
+=======
+    char.facing = 1; //1 is right, -1 is left
+>>>>>>> 1e67196c09980ac17bf729d5182b81a1f21a30f4
     char.game = game;
     char.isAlive = true;
     return char;
@@ -18,10 +22,12 @@ Character.prototype = {
     turnLeft(){
         this.velx = -this.baseSpeed;
         this.vely = 0;
+        this.facing = -1;
     },
     turnRight(){
         this.velx = this.baseSpeed;
         this.vely = 0;
+        this.facing = 1;
     },
     turnUp(){
         this.vely = -this.baseSpeed;
@@ -34,6 +40,7 @@ Character.prototype = {
     stop(){
         this.velx = 0;
         this.vely = 0;
+        this.facing = 1;
     },
     move(){
         this.x += this.velx;
