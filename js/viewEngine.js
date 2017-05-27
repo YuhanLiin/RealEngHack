@@ -18,8 +18,15 @@ function eraseGame(game){
     ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
 }
 
-var playerSpritesHori = [document.getElementById('player1'), document.getElementById('player2')];
-var playerSpritesVert = [document.getElementById('player3'), document.getElementById('player4')];
+var playerSpritesHori = [document.getElementById('player1'),
+                         document.getElementById('player2Right'),
+                         document.getElementById('player2Left'),];
+
+var playerSpritesVert = [document.getElementById('player3Right'),
+                         document.getElementById('player3Left'),
+                         document.getElementById('player4Right'),
+                         document.getElementById('player4Left'),];
+
 var drawPlayer = function(){
     var iteration = 0;
     var duration = 10
