@@ -9,15 +9,15 @@ function Hitbox(x, y, width, height, dmg){
 }
 
 Hitbox.prototype = {
-    function collide(char){
+    collide(char){
         return this.isActive && Math.abs(char.x - this.x) < (char.width + this.width)/2 
         && Math.abs(char.y - this.y) < (char.height + this.height)/2;
     },
-    function onHit(char){
+    onHit(char){
         char.isAlive = false;
-    }
-    function checkHit(char){
-        if this.collide(char){
+    },
+    checkHit(char){
+        if (this.collide(char)){
             this.onHit(char);
         }
     }

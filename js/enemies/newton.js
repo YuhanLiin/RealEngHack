@@ -1,4 +1,5 @@
 var Character = require("../character.js");
+var Hitbox = require("../hitbox/hitbox.js")
 
 function Newton(game, x, y){
     var char = Object.assign(Object.create(Newton.prototype), Character(game, x, y));
@@ -27,11 +28,11 @@ Newton.prototype = Object.assign(Character.prototype, {
         this.attack();
     },
     _attackProcess(){
-        if (atkFrame === 5){
+        if (this.atkFrame === 5){
             this.game.enemyAttacks.push(Hitbox(this.x, this.y, this.width, this.height));
         }
-        else if (atkFrame === 10){
-            atkFrame = 0;
+        else if (this.atkFrame === 10){
+            this.atkFrame = 0;
         }
     }
 });

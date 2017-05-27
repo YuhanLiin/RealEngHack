@@ -22,13 +22,13 @@ function Player(game, x, y){
                 break;
         }
         if (controls.attack != 'i') this.attack();
-    };
-    char._attackProcess(){
-        if (atkFrame === 10){
+    },
+    char._attackProcess = function(){
+        if (this.atkFrame === 10){
             this.game.playerAttacks.push(Hitbox(this.x+(this.width/2+20)*this.facing, this.y+20, 40, 10));
         }
-        else if (atkFrame === 15){
-            atkFrame = 0;
+        else if (this.atkFrame === 15){
+            this.atkFrame = 0;
         }
     }
     return char;

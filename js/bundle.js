@@ -6,7 +6,9 @@ function Character(game, x, y){
     char.velx = 0;
     char.vely = 0;
     char.facing = 1;
+    char.atkFrame = 0;
     char.game = game;
+    char.isAlive = true;
     return char;
 }
 
@@ -17,10 +19,12 @@ Character.prototype = {
     turnLeft(){
         this.velx = -this.baseSpeed;
         this.vely = 0;
+        this.facing = -1;
     },
     turnRight(){
         this.velx = this.baseSpeed;
         this.vely = 0;
+        this.facing = 1;
     },
     turnUp(){
         this.vely = -this.baseSpeed;
@@ -33,6 +37,7 @@ Character.prototype = {
     stop(){
         this.velx = 0;
         this.vely = 0;
+        this.facing = 1;
     },
     move(){
         this.x += this.velx;
@@ -50,14 +55,26 @@ Character.prototype = {
             this.y = this.game.height - this.height/2;
         }
     },
+    attack(){
+        if (this.atkFrame === 0){
+            this.atkFrame++;
+        }
+    },
     frameProcess(){
-        this.move();
+        if (this.atkFrame > 0){
+            this.atkFrame++;
+            this._attackProcess();
+        }
+        else{
+            this.move();
+        }
     }
 }
 
 module.exports = Character;
 },{}],2:[function(require,module,exports){
 var Character = require("../character.js");
+var Hitbox = require("../hitbox/hitbox.js")
 
 function Newton(game, x, y){
     var char = Object.assign(Object.create(Newton.prototype), Character(game, x, y));
@@ -83,11 +100,20 @@ Newton.prototype = Object.assign(Character.prototype, {
             }
             else this.turnUp();
         }
+        this.attack();
+    },
+    _attackProcess(){
+        if (this.atkFrame === 5){
+            this.game.enemyAttacks.push(Hitbox(this.x, this.y, this.width, this.height));
+        }
+        else if (this.atkFrame === 10){
+            this.atkFrame = 0;
+        }
     }
 });
 
 module.exports = Newton;
-},{"../character.js":1}],3:[function(require,module,exports){
+},{"../character.js":1,"../hitbox/hitbox.js":4}],3:[function(require,module,exports){
 var Character = require("./character.js");
 var Player = require("./player.js");
 var Newton = require("./enemies/newton.js");
@@ -115,6 +141,10 @@ function Game(){
         if (game.frameCount % (60*4) === 0){
             game.enemies.push(randomSpawn(game,Newton));
         }
+        game.playerAttacks.forEach(atk=>{
+            game.enemies.forEach(enemy=>atk.checkHit(enemy));
+        });
+        game.enemyAttacks.forEach(atk=>atk.checkHit(game.player))
         game.frameCount++;
     };
 
@@ -168,7 +198,34 @@ function Game(){
 }
 
 module.exports = Game;
-},{"./character.js":1,"./enemies/newton.js":2,"./player.js":5,"./randomSpawn.js":6}],4:[function(require,module,exports){
+},{"./character.js":1,"./enemies/newton.js":2,"./player.js":6,"./randomSpawn.js":7}],4:[function(require,module,exports){
+function Hitbox(x, y, width, height, dmg){
+    var box = Object.create(Hitbox.prototype);
+    box.x = x;
+    box.y = y;
+    box. width = width;
+    box.height = height;
+    box.damage = dmg;
+    return box; 
+}
+
+Hitbox.prototype = {
+    collide(char){
+        return this.isActive && Math.abs(char.x - this.x) < (char.width + this.width)/2 
+        && Math.abs(char.y - this.y) < (char.height + this.height)/2;
+    },
+    onHit(char){
+        char.isAlive = false;
+    },
+    checkHit(char){
+        if (this.collide(char)){
+            this.onHit(char);
+        }
+    }
+};
+
+module.exports = Hitbox;
+},{}],5:[function(require,module,exports){
 $(document).ready(function(){
     var Game = require("./game.js");
     var view = require("./viewEngine.js");
@@ -201,8 +258,9 @@ $(document).ready(function(){
 });
 
 
-},{"./game.js":3,"./viewEngine.js":7}],5:[function(require,module,exports){
+},{"./game.js":3,"./viewEngine.js":8}],6:[function(require,module,exports){
 var Character = require("./character.js");
+var Hitbox = require("./hitbox/hitbox.js")
 
 function Player(game, x, y){
     var char = Character(game, x, y);
@@ -224,12 +282,21 @@ function Player(game, x, y){
                 this.turnRight();
                 break;
         }
-    };
+        if (controls.attack != 'i') this.attack();
+    },
+    char._attackProcess = function(){
+        if (this.atkFrame === 10){
+            this.game.playerAttacks.push(Hitbox(this.x+(this.width/2+20)*this.facing, this.y+20, 40, 10));
+        }
+        else if (this.atkFrame === 15){
+            this.atkFrame = 0;
+        }
+    }
     return char;
 }
 
 module.exports = Player;
-},{"./character.js":1}],6:[function(require,module,exports){
+},{"./character.js":1,"./hitbox/hitbox.js":4}],7:[function(require,module,exports){
 function randomSpawn(game, enemyFactory){
     var width = enemyFactory.prototype.width;
     var height = enemyFactory.prototype.height;
@@ -261,7 +328,7 @@ function randomSpawn(game, enemyFactory){
 }
 
 module.exports = randomSpawn;
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var canvas = document.getElementById('screen');
 var ctx = canvas.getContext('2d');
 
@@ -292,8 +359,17 @@ var drawPlayer = function(){
         var sprites;
         if (player.vely != 0) sprites = playerSpritesVert;
         else sprites = playerSpritesHori;
-        ctx.drawImage(sprites[Math.floor(iteration/duration)], player.x-player.width/2, 
+        
+        if (player.facing === 1) { //If facing right
+            ctx.drawImage(sprites[Math.floor(iteration/duration)], player.x-player.width/2, 
             player.y-player.height/2, player.width*1.8, player.height);
+        }
+        
+        else if (player.facing === -1) { //If facing left
+            ctx.drawImage(sprites[Math.floor(iteration/duration)], player.x-player.width/2-player.width*0.8, 
+            player.y-player.height/2, player.width*1.8, player.height);
+        }
+        
         if (player.velx != 0 || player.vely != 0) iteration++;
         if(iteration >= 2*duration) iteration = 0;
     }
@@ -325,4 +401,4 @@ function drawHitbox(hitbox){
 }
 
 module.exports = {eraseGame: eraseGame, drawGame: drawGame};
-},{}]},{},[4]);
+},{}]},{},[5]);
