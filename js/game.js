@@ -16,6 +16,7 @@ function Game(){
     game.enemyAttacks = [];
 
     game.runFrame = function(){
+        game.enemyAttacks = [], game.playerAttacks = [];
         game.player.receiveInputs(game.controls);
         game.player.frameProcess();
         game.enemies.forEach(enemy=>{
@@ -27,6 +28,7 @@ function Game(){
         }
         game.playerAttacks.forEach(atk=>{
             game.enemies.forEach(enemy=>atk.checkHit(enemy));
+
         });
         game.enemyAttacks.forEach(atk=>atk.checkHit(game.player))
         game.frameCount++;

@@ -129,6 +129,7 @@ function Game(){
     game.enemyAttacks = [];
 
     game.runFrame = function(){
+        game.enemyAttacks = [], game.playerAttacks = [];
         game.player.receiveInputs(game.controls);
         game.player.frameProcess();
         game.enemies.forEach(enemy=>{
@@ -140,6 +141,7 @@ function Game(){
         }
         game.playerAttacks.forEach(atk=>{
             game.enemies.forEach(enemy=>atk.checkHit(enemy));
+
         });
         game.enemyAttacks.forEach(atk=>atk.checkHit(game.player))
         game.frameCount++;
@@ -329,6 +331,8 @@ module.exports = randomSpawn;
 var canvas = document.getElementById('screen');
 var ctx = canvas.getContext('2d');
 
+var hitboxCache = [];
+
 function drawGame(game){
     drawPlayer(game.player);
     game.enemies.forEach(drawEnemy);
@@ -338,11 +342,18 @@ function drawGame(game){
     drawHitbox(game.player);
     game.enemies.forEach(drawHitbox);
     ctx.fillStyle='red';
-    game.enemyAttacks.forEach(drawHitbox);
-    game.playerAttacks.forEach(drawHitbox);
+    for (let i=0; i<hitboxCache.length; i++){
+        var pair = hitboxCache[i];
+        drawHitbox(pair[0]);
+        pair[1] -= 1;
+        if (pair[1] === 0){
+            hitboxCache.splice(i);
+            i--;
+        }
+    }
+    game.enemyAttacks.forEach(atk=>hitboxCache.push([atk,10]));
+    game.playerAttacks.forEach(atk=>hitboxCache.push([atk,10]));
     ctx.globalAlpha = 1;
-    
-
 }
 
 var bg = document.getElementById('bg');
