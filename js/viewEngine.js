@@ -16,9 +16,10 @@ var drawPlayer = function(){
     var iteration = 0;
     var duration = 10
     return function (player){
+        //x2 width to compensate for the gun
         ctx.drawImage(playerSprites[Math.floor(iteration/duration)], player.x-player.width/2, 
-            player.y-player.height/2, player.width, player.height);
-        iteration++;
+            player.y-player.height/2, player.width*2, player.height);
+        if (player.velx != 0 || player.vely != 0) iteration++;
         if(iteration >= playerSprites.length*duration) iteration = 0;
     }
 }()
