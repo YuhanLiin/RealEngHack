@@ -2,6 +2,8 @@ var Character = require("./character.js");
 var Player = require("./player.js");
 var Newton = require("./enemies/newton.js");
 
+var randomSpawn = require("./randomSpawn.js");
+
 function Game(){
     var game = {};
     game.width = 800;
@@ -9,7 +11,7 @@ function Game(){
     game.frameCount = 0;
     game.player = Player(game, 400, 300);
     game.controls = {dir: 'i', dash:'i', attack:'i'};
-    game.enemies = [Newton(game, 100, 100)];
+    game.enemies = [];
     game.playerAttacks = [];
     game.enemyAttacks = [];
 
@@ -20,6 +22,14 @@ function Game(){
             enemy.aiDecision(game.player);
             enemy.frameProcess();
         });
+        if (game.frameCount % (60*4) === 0){
+            game.enemies.push(randomSpawn(game,Newton));
+        }
+        game.playerAttacks.forEach(atk=>{
+            game.enemies.forEach(enemy=>atk.checkHit(enemy));
+        });
+        game.enemyAttacks.forEach(atk=>atk.checkHit(game.player))
+        game.frameCount++;
     };
 
     game.onPress = function(keyCode){

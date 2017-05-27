@@ -24,6 +24,15 @@ Newton.prototype = Object.assign(Character.prototype, {
             }
             else this.turnUp();
         }
+        this.attack();
+    },
+    _attackProcess(){
+        if (atkFrame === 5){
+            this.game.enemyAttacks.push(Hitbox(this.x, this.y, this.width, this.height));
+        }
+        else if (atkFrame === 10){
+            atkFrame = 0;
+        }
     }
 });
 

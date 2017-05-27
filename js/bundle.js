@@ -92,6 +92,8 @@ var Character = require("./character.js");
 var Player = require("./player.js");
 var Newton = require("./enemies/newton.js");
 
+var randomSpawn = require("./randomSpawn.js");
+
 function Game(){
     var game = {};
     game.width = 800;
@@ -99,7 +101,7 @@ function Game(){
     game.frameCount = 0;
     game.player = Player(game, 400, 300);
     game.controls = {dir: 'i', dash:'i', attack:'i'};
-    game.enemies = [Newton(game, 100, 100)];
+    game.enemies = [];
     game.playerAttacks = [];
     game.enemyAttacks = [];
 
@@ -110,6 +112,10 @@ function Game(){
             enemy.aiDecision(game.player);
             enemy.frameProcess();
         });
+        if (game.frameCount % (60*4) === 0){
+            game.enemies.push(randomSpawn(game,Newton));
+        }
+        game.frameCount++;
     };
 
     game.onPress = function(keyCode){
@@ -162,7 +168,7 @@ function Game(){
 }
 
 module.exports = Game;
-},{"./character.js":1,"./enemies/newton.js":2,"./player.js":5}],4:[function(require,module,exports){
+},{"./character.js":1,"./enemies/newton.js":2,"./player.js":5,"./randomSpawn.js":6}],4:[function(require,module,exports){
 $(document).ready(function(){
     var Game = require("./game.js");
     var view = require("./viewEngine.js");
@@ -195,7 +201,7 @@ $(document).ready(function(){
 });
 
 
-},{"./game.js":3,"./viewEngine.js":6}],5:[function(require,module,exports){
+},{"./game.js":3,"./viewEngine.js":7}],5:[function(require,module,exports){
 var Character = require("./character.js");
 
 function Player(game, x, y){
@@ -224,6 +230,38 @@ function Player(game, x, y){
 
 module.exports = Player;
 },{"./character.js":1}],6:[function(require,module,exports){
+function randomSpawn(game, enemyFactory){
+    var width = enemyFactory.prototype.width;
+    var height = enemyFactory.prototype.height;
+    var rand = Math.random();
+    var x, y;
+    var rx = Math.random()*game.width;
+    var ry = Math.random()*game.height;
+    if (rand < 0.3){
+        //top spawn
+        y = -height;
+        x = rx;
+    }
+    else if (rand < 0.6){
+        //bottom spawn
+        y = game.height + height;
+        x = rx;
+    }
+    else if (rand < 0.8){
+        //left spawn
+        y = ry;
+        x = -width;
+    }
+    else{
+        //right spawn
+        y = ry;
+        x = game.width + width;
+    }
+    return enemyFactory(game, x, y);
+}
+
+module.exports = randomSpawn;
+},{}],7:[function(require,module,exports){
 var canvas = document.getElementById('screen');
 var ctx = canvas.getContext('2d');
 

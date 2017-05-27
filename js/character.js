@@ -5,7 +5,9 @@ function Character(game, x, y){
     char.velx = 0;
     char.vely = 0;
     char.facing = 1;
+    char.atkFrame = 0;
     char.game = game;
+    char.isAlive = true;
     return char;
 }
 
@@ -49,8 +51,19 @@ Character.prototype = {
             this.y = this.game.height - this.height/2;
         }
     },
+    attack(){
+        if (atkFrame === 0){
+            atkFrame++;
+        }
+    },
     frameProcess(){
-        this.move();
+        if (atkFrame > 0){
+            atkFrame++;
+            this._attackProcess();
+        }
+        else{
+            this.move();
+        }
     }
 }
 

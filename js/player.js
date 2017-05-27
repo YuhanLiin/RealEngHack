@@ -1,4 +1,5 @@
 var Character = require("./character.js");
+var Hitbox = require("./hitbox/hitbox.js")
 
 function Player(game, x, y){
     var char = Character(game, x, y);
@@ -20,7 +21,16 @@ function Player(game, x, y){
                 this.turnRight();
                 break;
         }
+        if (controls.attack != 'i') this.attack();
     };
+    char._attackProcess(){
+        if (atkFrame === 10){
+            this.game.playerAttacks.push(Hitbox(this.x+(this.width/2+20)*this.facing, this.y+20, 40, 10));
+        }
+        else if (atkFrame === 15){
+            atkFrame = 0;
+        }
+    }
     return char;
 }
 
