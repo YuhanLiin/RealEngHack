@@ -63,9 +63,7 @@ Character.prototype = {
             this.atkFrame++;
             this._attackProcess();
         }
-        else{
-            this.move();
-        }
+        this.move();
     }
 }
 

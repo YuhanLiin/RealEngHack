@@ -5,11 +5,16 @@ function drawGame(game){
     drawPlayer(game.player);
     game.enemies.forEach(drawEnemy);
 
-    ctx.fillStyle='red';
     ctx.globalAlpha = 0.2;
+    ctx.fillStyle='yellow';
     drawHitbox(game.player);
+    game.enemies.forEach(drawHitbox);
+    ctx.fillStyle='red';
+    game.enemyAttacks.forEach(drawHitbox);
+    game.playerAttacks.forEach(drawHitbox);
     ctx.globalAlpha = 1;
-    //Draw other shit
+    
+
 }
 
 var bg = document.getElementById('bg');
@@ -21,12 +26,12 @@ function eraseGame(game){
 var playerSpritesHori = [document.getElementById('player2Right'),
                         document.getElementById('player1'),
                         document.getElementById('player1Left'),
-                         document.getElementById('player2Left'),];
+                         document.getElementById('player2Left')];
 
 var playerSpritesVert = [document.getElementById('player3Right'),
                          document.getElementById('player4Right'),
                          document.getElementById('player3Left'),
-                         document.getElementById('player4Left'),];
+                         document.getElementById('player4Left')];
 
 var drawPlayer = function(){
     var iteration = 0;
