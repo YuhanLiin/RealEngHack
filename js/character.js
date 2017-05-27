@@ -36,7 +36,6 @@ Character.prototype = {
     stop(){
         this.velx = 0;
         this.vely = 0;
-        this.facing = 1;
     },
     move(){
         this.x += this.velx;
