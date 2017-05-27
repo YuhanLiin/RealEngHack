@@ -2,17 +2,17 @@ function Character(game, x, y){
     var char = Object.create(Character.prototype);
     char.x = x;
     char.y = y;
-    char.baseSpeed = 5;
     char.velx = 0;
     char.vely = 0;
     char.facing = 1;
-    char.width = 40;
-    char.height = 50;
     char.game = game;
     return char;
 }
 
 Character.prototype = {
+    baseSpeed: 5,
+    width: 40,
+    height: 50,
     turnLeft(){
         this.velx = -this.baseSpeed;
         this.vely = 0;
