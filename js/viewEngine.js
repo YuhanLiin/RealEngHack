@@ -28,8 +28,16 @@ var drawPlayer = function(){
         var sprites;
         if (player.vely != 0) sprites = playerSpritesVert;
         else sprites = playerSpritesHori;
-        ctx.drawImage(sprites[Math.floor(iteration/duration)], player.x-player.width/2, 
+        
+        if (player.facing === 1) {
+            ctx.drawImage(sprites[Math.floor(iteration/duration)], player.x-player.width/2, 
             player.y-player.height/2, player.width*1.8, player.height);
+        }
+        else if (player.facing === -1) {
+            ctx.drawImage(sprites[Math.floor(iteration/duration)], player.x-player.width/2-player.width*0.8, 
+            player.y-player.height/2, player.width*1.8, player.height);
+        }
+        
         if (player.velx != 0 || player.vely != 0) iteration++;
         if(iteration >= 2*duration) iteration = 0;
     }

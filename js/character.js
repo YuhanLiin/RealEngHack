@@ -4,7 +4,7 @@ function Character(game, x, y){
     char.y = y;
     char.velx = 0;
     char.vely = 0;
-    char.facing = 1;
+    char.facing = 1; //1 is right, -1 is left
     char.game = game;
     return char;
 }
@@ -16,10 +16,12 @@ Character.prototype = {
     turnLeft(){
         this.velx = -this.baseSpeed;
         this.vely = 0;
+        this.facing = -1;
     },
     turnRight(){
         this.velx = this.baseSpeed;
         this.vely = 0;
+        this.facing = 1;
     },
     turnUp(){
         this.vely = -this.baseSpeed;
@@ -32,6 +34,7 @@ Character.prototype = {
     stop(){
         this.velx = 0;
         this.vely = 0;
+        this.facing = 1;
     },
     move(){
         this.x += this.velx;
