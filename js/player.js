@@ -3,7 +3,6 @@ var Character = require("./character.js");
 function Player(game, x, y){
     var char = Character(game, x, y);
     char.receiveInputs = function(controls){
-        console.log(controls)
         switch(controls.dir){
             case 'i':
                 this.stop();
