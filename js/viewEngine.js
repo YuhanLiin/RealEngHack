@@ -20,7 +20,7 @@ function eraseGame(game){
 
 var playerSpritesHori = [document.getElementById('player2Right'),
                         document.getElementById('player1'),
-                         document.getElementById('player1'),
+                        document.getElementById('player1Left'),
                          document.getElementById('player2Left'),];
 
 var playerSpritesVert = [document.getElementById('player3Right'),
@@ -43,7 +43,7 @@ var drawPlayer = function(){
         }
         
         else if (player.facing === -1) { //If facing left
-            ctx.drawImage(sprites[Math.floor(iteration/duration)+2], player.x-player.width/2-player.width*0.8, 
+            ctx.drawImage(sprites[Math.ceil(Math.floor(iteration/duration)+2)], player.x-player.width/2-player.width*0.8, 
             player.y-player.height/2, player.width*1.8, player.height);
         }
         
