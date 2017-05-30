@@ -10,11 +10,12 @@ function Hitbox(x, y, width, height, dmg){
 
 Hitbox.prototype = {
     collide(char){
-        return this.isActive && Math.abs(char.x - this.x) < (char.width + this.width)/2 
+        return Math.abs(char.x - this.x) < (char.width + this.width)/2 
         && Math.abs(char.y - this.y) < (char.height + this.height)/2;
     },
     onHit(char){
-        char.hp -= 2;
+        char.hp -= this.damage;
+        console.log(this.dmg, char.hp)
     },
     checkHit(char){
         if (this.collide(char)){

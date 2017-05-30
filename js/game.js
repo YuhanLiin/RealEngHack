@@ -24,7 +24,7 @@ function Game(){
             enemy.frameProcess();
         });
         if (game.frameCount % (60*4) === 0){
-            //game.enemies.push(randomSpawn(game,Newton));
+            game.enemies.push(randomSpawn(game,Newton));
         }
         game.playerAttacks.forEach(atk=>{
             game.enemies.forEach(enemy=>atk.checkHit(enemy));

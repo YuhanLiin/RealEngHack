@@ -46,19 +46,25 @@ function flip(img){
     return flipped;
 }
 
+function drawBar(maxVal, curVal, x, y, width, height, color){
+    curVal = Math.max(curVal, 0);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(x-width/2, y-height/2, width, height);
+    width -= 0.2*height, height -= 0.2*height;
+    ctx.fillStyle = color;
+    ctx.fillRect(x-width/2, y-height/2, width*curVal/maxVal, height);
+}
+
 var playerSpritesHori = [[document.getElementById('player2Right'),
                         document.getElementById('player1')]];
 playerSpritesHori.push(playerSpritesHori[0].map(flip));
-
 var playerSpritesVert = [[document.getElementById('player3Right'),
                          document.getElementById('player4Right')]];
 playerSpritesVert.push(playerSpritesVert[0].map(flip));
-
 var playerAttackSprites = [[playerSpritesHori[0][0],
                             document.getElementById('playerAttack2Right'),
                             document.getElementById('playerAttack3Right')]];
 playerAttackSprites.push(playerAttackSprites[0].map(flip));
-
 var drawPlayer = function(){
     var iteration = 0;
     var duration = 10
@@ -78,6 +84,8 @@ var drawPlayer = function(){
             ctx.drawImage(sprites[1][index], player.x-player.width/2-player.width*0.8, 
             player.y-player.height/2, player.width*1.8, player.height);
         }
+
+        drawBar(player.maxHp, player.hp, player.x, player.y - 30, 40, 10, 'red');
         
         if (player.velx != 0 || player.vely != 0) iteration++;
         if(iteration >= 2*duration) iteration = 0;
@@ -86,6 +94,7 @@ var drawPlayer = function(){
 
 function drawEnemy(enemy){
     drawNewton(enemy);
+    drawBar(enemy.maxHp, enemy.hp, enemy.x, enemy.y - 30, 40, 10, 'red');
 }
 
 var newtonSpritesHori = [document.getElementById('newton1'), document.getElementById('newton2')];

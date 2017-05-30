@@ -104,7 +104,7 @@ Newton.prototype = Object.assign(Character.prototype, {
     },
     _attackProcess(){
         if (this.atkFrame === 5){
-            this.game.enemyAttacks.push(Hitbox(this.x, this.y, this.width, this.height));
+            this.game.enemyAttacks.push(Hitbox(this.x, this.y+10, this.width, this.height/2, 2));
         }
         else if (this.atkFrame === 10){
             this.atkFrame = 0;
@@ -140,7 +140,7 @@ function Game(){
             enemy.frameProcess();
         });
         if (game.frameCount % (60*4) === 0){
-            //game.enemies.push(randomSpawn(game,Newton));
+            game.enemies.push(randomSpawn(game,Newton));
         }
         game.playerAttacks.forEach(atk=>{
             game.enemies.forEach(enemy=>atk.checkHit(enemy));
@@ -213,11 +213,12 @@ function Hitbox(x, y, width, height, dmg){
 
 Hitbox.prototype = {
     collide(char){
-        return this.isActive && Math.abs(char.x - this.x) < (char.width + this.width)/2 
+        return Math.abs(char.x - this.x) < (char.width + this.width)/2 
         && Math.abs(char.y - this.y) < (char.height + this.height)/2;
     },
     onHit(char){
-        char.hp -= 2;
+        char.hp -= this.damage;
+        console.log(this.dmg, char.hp)
     },
     checkHit(char){
         if (this.collide(char)){
@@ -290,7 +291,7 @@ function Player(game, x, y){
     },
     char._attackProcess = function(){
         if (this.atkFrame === 10){
-            this.game.playerAttacks.push(Hitbox(this.x+(this.width/2+20)*this.facing, this.y-20, 35, 20));
+            this.game.playerAttacks.push(Hitbox(this.x+(this.width/2+20)*this.facing, this.y-20, 35, 20, 4));
         }
         else if (this.atkFrame === 15){
             this.atkFrame = 0;
@@ -381,19 +382,25 @@ function flip(img){
     return flipped;
 }
 
+function drawBar(maxVal, curVal, x, y, width, height, color){
+    curVal = Math.max(curVal, 0);
+    ctx.fillStyle = 'black';
+    ctx.fillRect(x-width/2, y-height/2, width, height);
+    width -= 0.2*height, height -= 0.2*height;
+    ctx.fillStyle = color;
+    ctx.fillRect(x-width/2, y-height/2, width*curVal/maxVal, height);
+}
+
 var playerSpritesHori = [[document.getElementById('player2Right'),
                         document.getElementById('player1')]];
 playerSpritesHori.push(playerSpritesHori[0].map(flip));
-
 var playerSpritesVert = [[document.getElementById('player3Right'),
                          document.getElementById('player4Right')]];
 playerSpritesVert.push(playerSpritesVert[0].map(flip));
-
 var playerAttackSprites = [[playerSpritesHori[0][0],
                             document.getElementById('playerAttack2Right'),
                             document.getElementById('playerAttack3Right')]];
 playerAttackSprites.push(playerAttackSprites[0].map(flip));
-
 var drawPlayer = function(){
     var iteration = 0;
     var duration = 10
@@ -413,6 +420,8 @@ var drawPlayer = function(){
             ctx.drawImage(sprites[1][index], player.x-player.width/2-player.width*0.8, 
             player.y-player.height/2, player.width*1.8, player.height);
         }
+
+        drawBar(player.maxHp, player.hp, player.x, player.y - 30, 40, 10, 'red');
         
         if (player.velx != 0 || player.vely != 0) iteration++;
         if(iteration >= 2*duration) iteration = 0;
@@ -421,6 +430,7 @@ var drawPlayer = function(){
 
 function drawEnemy(enemy){
     drawNewton(enemy);
+    drawBar(enemy.maxHp, enemy.hp, enemy.x, enemy.y - 30, 40, 10, 'red');
 }
 
 var newtonSpritesHori = [document.getElementById('newton1'), document.getElementById('newton2')];

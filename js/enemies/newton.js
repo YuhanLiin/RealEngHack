@@ -31,7 +31,7 @@ Newton.prototype = Object.assign(Character.prototype, {
     },
     _attackProcess(){
         if (this.atkFrame === 5){
-            this.game.enemyAttacks.push(Hitbox(this.x, this.y, this.width, this.height));
+            this.game.enemyAttacks.push(Hitbox(this.x, this.y+10, this.width, this.height/2, 2));
         }
         else if (this.atkFrame === 10){
             this.atkFrame = 0;
