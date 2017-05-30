@@ -2,7 +2,7 @@ var canvas = document.getElementById('screen');
 var ctx = canvas.getContext('2d');
 
 var hitboxCache = [];
-function showBoxes(){
+function showBoxes(game){
     ctx.globalAlpha = 0.2;
     ctx.fillStyle='yellow';
     drawHitbox(game.player);
@@ -26,7 +26,7 @@ function drawGame(game){
     drawPlayer(game.player);
     game.enemies.forEach(drawEnemy);
 
-    showBoxes();
+    showBoxes(game);
 }
 
 var bg = document.getElementById('bg');
@@ -37,30 +37,27 @@ function eraseGame(game){
 
 function flip(img){
     var canvas = document.createElement('canvas');
+    canvas.height = img.height, canvas.width = img.width;
     var ctx = canvas.getContext('2d');
     ctx.scale(-1, 1);
-    ctx.drawImage(img, 0, 0);
-    var flipped = new Img();
-    flipped.src = canvas.toDataUrl();
+    ctx.drawImage(img, 0, 0, -img.width, img.height);
+    var flipped = new Image();
+    flipped.src = canvas.toDataURL();
     return flipped;
 }
 
 var playerSpritesHori = [[document.getElementById('player2Right'),
-                        document.getElementById('player1')],
-                        [document.getElementById('player1Left'),
-                         document.getElementById('player2Left')]];
+                        document.getElementById('player1')]];
+playerSpritesHori.push(playerSpritesHori[0].map(flip));
 
 var playerSpritesVert = [[document.getElementById('player3Right'),
-                         document.getElementById('player4Right')],
-                         [document.getElementById('player3Left'),
-                         document.getElementById('player4Left')]];
+                         document.getElementById('player4Right')]];
+playerSpritesVert.push(playerSpritesVert[0].map(flip));
 
 var playerAttackSprites = [[playerSpritesHori[0][0],
                             document.getElementById('playerAttack2Right'),
-                            document.getElementById('playerAttack3Right')],
-                            [playerSpritesHori[1][0],
-                            document.getElementById('playerAttack2Left'),
-                            document.getElementById('playerAttack3Left')]];
+                            document.getElementById('playerAttack3Right')]];
+playerAttackSprites.push(playerAttackSprites[0].map(flip));
 
 var drawPlayer = function(){
     var iteration = 0;
