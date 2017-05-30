@@ -4,7 +4,7 @@
   "description": "\"Enghack project\"",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "watchify js/main.js -o js/bundle.js"
   },
   "keywords": [
     "EngHack"

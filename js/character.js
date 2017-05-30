@@ -7,7 +7,7 @@ function Character(game, x, y){
     char.facing = 1;
     char.atkFrame = 0;
     char.game = game;
-    char.isAlive = true;
+    char.hp = char.maxHp;
     return char;
 }
 
@@ -15,6 +15,7 @@ Character.prototype = {
     baseSpeed: 5,
     width: 40,
     height: 50,
+    maxHp: 20,
     turnLeft(){
         this.velx = -this.baseSpeed;
         this.vely = 0;

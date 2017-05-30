@@ -14,7 +14,7 @@ Hitbox.prototype = {
         && Math.abs(char.y - this.y) < (char.height + this.height)/2;
     },
     onHit(char){
-        char.isAlive = false;
+        char.hp -= 2;
     },
     checkHit(char){
         if (this.collide(char)){

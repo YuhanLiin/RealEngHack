@@ -3,6 +3,7 @@ var Hitbox = require("../hitbox/hitbox.js")
 
 function Newton(game, x, y){
     var char = Object.assign(Object.create(Newton.prototype), Character(game, x, y));
+    char.hp = char.maxHp;
     return char;
 }
 
@@ -10,6 +11,7 @@ Newton.prototype = Object.assign(Character.prototype, {
     baseSpeed : 3.5,
     width : 40,
     height : 50,
+    maxHp: 10,
     aiDecision(player){
         var dx = player.x - this.x;
         var dy = player.y - this.y;
