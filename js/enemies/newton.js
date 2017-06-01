@@ -11,7 +11,7 @@ Newton.prototype = Object.assign(Character.prototype, {
     baseSpeed : 3.5,
     width : 40,
     height : 50,
-    maxHp: 10,
+    maxHp: 4,
     aiDecision(player){
         var dx = player.x - this.x;
         var dy = player.y - this.y;
@@ -31,7 +31,7 @@ Newton.prototype = Object.assign(Character.prototype, {
     },
     _attackProcess(){
         if (this.atkFrame === 5){
-            this.game.enemyAttacks.push(Hitbox(this.x, this.y+10, this.width, this.height/2, 2));
+            this.game.enemyAttacks.push(Hitbox(this.x, this.y+10, this.width, this.height/2, 1));
         }
         else if (this.atkFrame === 10){
             this.atkFrame = 0;

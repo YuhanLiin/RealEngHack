@@ -14,6 +14,7 @@ function Game(){
     game.enemies = [];
     game.playerAttacks = [];
     game.enemyAttacks = [];
+    game.isDone = false;
 
     game.runFrame = function(){
         game.enemyAttacks = [], game.playerAttacks = [];
@@ -23,14 +24,25 @@ function Game(){
             enemy.aiDecision(game.player);
             enemy.frameProcess();
         });
-        if (game.frameCount % (60*4) === 0){
-            game.enemies.push(randomSpawn(game,Newton));
+        if (game.state != "dead"){
+            if (game.frameCount % (60*4) === 0){
+                game.enemies.push(randomSpawn(game,Newton));
+            }
         }
-        game.playerAttacks.forEach(atk=>{
-            game.enemies.forEach(enemy=>atk.checkHit(enemy));
+        //Do hit check b4 death check
+        for (let i = 0; i<game.enemies.length; i++){
+            let enemy = game.enemies[i];
+            game.playerAttacks.forEach(atk=>atk.checkHit(enemy));
+            if (enemy.hp <= 0){
+                game.enemies.shift(i, 1);
+                i--;
+            }
+        }
 
-        });
         game.enemyAttacks.forEach(atk=>atk.checkHit(game.player))
+        if (game.player.hp <= 0){
+            game.isDone = true;
+        }
         game.frameCount++;
     };
 

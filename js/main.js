@@ -17,13 +17,14 @@ $(document).ready(function(){
         view.eraseGame(game);
         for (let tickFrames = 0; delta >= frameTime; delta -= frameTime, tickFrames++){
             game.runFrame();
+            if (game.isDone) break;
             if (tickFrames > 50){
                 console.log("frame dump");
                 delta = 0;
             }
         }
         view.drawGame(game);
-        requestAnimationFrame(tick);
+        if (!game.isDone) requestAnimationFrame(tick);
     }
 
     tick();

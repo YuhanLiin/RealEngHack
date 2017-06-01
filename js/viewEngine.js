@@ -23,10 +23,45 @@ function showBoxes(game){
 }
 
 function drawGame(game){
+    drawGameState(game);
+    //debug
+    showBoxes(game);
+    if (game.isDone){
+        drawDeath(game);
+    }
+}
+
+function drawGameState(game){
     drawPlayer(game.player);
     game.enemies.forEach(drawEnemy);
+}
 
-    showBoxes(game);
+var rip = document.getElementById('rip');
+function drawDeath (game){
+    var frameCount = 0;
+    var endFrame = 5*60;
+    var fadedAlpha = 1;
+    var lastGameFrame = new Image();
+    lastGameFrame.src = canvas.toDataURL();
+    function drawBgRect(){
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "rgb(51, 51, 51)"
+        ctx.fillRect(0,0,canvas.width, canvas.height);
+    }
+    function frame(){
+        if (frameCount < 5*60){
+            drawBgRect();
+            ctx.globalAlpha = fadedAlpha;
+            fadedAlpha -= 1/5/60;
+            ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(lastGameFrame, 0, 0, canvas.width, canvas.height);
+        }
+
+        if (frameCount <= endFrame) requestAnimationFrame(frame);
+        else drawBgRect();
+        frameCount++;
+    }
+    requestAnimationFrame(frame);
 }
 
 var bg = document.getElementById('bg');

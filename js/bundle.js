@@ -84,7 +84,7 @@ Newton.prototype = Object.assign(Character.prototype, {
     baseSpeed : 3.5,
     width : 40,
     height : 50,
-    maxHp: 10,
+    maxHp: 4,
     aiDecision(player){
         var dx = player.x - this.x;
         var dy = player.y - this.y;
@@ -104,7 +104,7 @@ Newton.prototype = Object.assign(Character.prototype, {
     },
     _attackProcess(){
         if (this.atkFrame === 5){
-            this.game.enemyAttacks.push(Hitbox(this.x, this.y+10, this.width, this.height/2, 2));
+            this.game.enemyAttacks.push(Hitbox(this.x, this.y+10, this.width, this.height/2, 1));
         }
         else if (this.atkFrame === 10){
             this.atkFrame = 0;
@@ -130,6 +130,7 @@ function Game(){
     game.enemies = [];
     game.playerAttacks = [];
     game.enemyAttacks = [];
+    game.isDone = false;
 
     game.runFrame = function(){
         game.enemyAttacks = [], game.playerAttacks = [];
@@ -139,14 +140,25 @@ function Game(){
             enemy.aiDecision(game.player);
             enemy.frameProcess();
         });
-        if (game.frameCount % (60*4) === 0){
-            game.enemies.push(randomSpawn(game,Newton));
+        if (game.state != "dead"){
+            if (game.frameCount % (60*4) === 0){
+                game.enemies.push(randomSpawn(game,Newton));
+            }
         }
-        game.playerAttacks.forEach(atk=>{
-            game.enemies.forEach(enemy=>atk.checkHit(enemy));
+        //Do hit check b4 death check
+        for (let i = 0; i<game.enemies.length; i++){
+            let enemy = game.enemies[i];
+            game.playerAttacks.forEach(atk=>atk.checkHit(enemy));
+            if (enemy.hp <= 0){
+                game.enemies.shift(i, 1);
+                i--;
+            }
+        }
 
-        });
         game.enemyAttacks.forEach(atk=>atk.checkHit(game.player))
+        if (game.player.hp <= 0){
+            game.isDone = true;
+        }
         game.frameCount++;
     };
 
@@ -248,13 +260,14 @@ $(document).ready(function(){
         view.eraseGame(game);
         for (let tickFrames = 0; delta >= frameTime; delta -= frameTime, tickFrames++){
             game.runFrame();
+            if (game.isDone) break;
             if (tickFrames > 50){
                 console.log("frame dump");
                 delta = 0;
             }
         }
         view.drawGame(game);
-        requestAnimationFrame(tick);
+        if (!game.isDone) requestAnimationFrame(tick);
     }
 
     tick();
@@ -359,10 +372,45 @@ function showBoxes(game){
 }
 
 function drawGame(game){
+    drawGameState(game);
+    //debug
+    showBoxes(game);
+    if (game.isDone){
+        drawDeath(game);
+    }
+}
+
+function drawGameState(game){
     drawPlayer(game.player);
     game.enemies.forEach(drawEnemy);
+}
 
-    showBoxes(game);
+var rip = document.getElementById('rip');
+function drawDeath (game){
+    var frameCount = 0;
+    var endFrame = 5*60;
+    var fadedAlpha = 1;
+    var lastGameFrame = new Image();
+    lastGameFrame.src = canvas.toDataURL();
+    function drawBgRect(){
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = "rgb(51, 51, 51)"
+        ctx.fillRect(0,0,canvas.width, canvas.height);
+    }
+    function frame(){
+        if (frameCount < 5*60){
+            drawBgRect();
+            ctx.globalAlpha = fadedAlpha;
+            fadedAlpha -= 1/5/60;
+            ctx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(lastGameFrame, 0, 0, canvas.width, canvas.height);
+        }
+
+        if (frameCount <= endFrame) requestAnimationFrame(frame);
+        else drawBgRect();
+        frameCount++;
+    }
+    requestAnimationFrame(frame);
 }
 
 var bg = document.getElementById('bg');
